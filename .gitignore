@@ -23,6 +23,7 @@
 MCPGateway/build
 MCPServerKnowledgeBaseDemo/build
 #IDE
+.idea
 MCPGateway/.idea
 MCPServerKnowledgeBaseDemo/.idea
 #Gradle
