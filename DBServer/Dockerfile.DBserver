@@ -1,0 +1,14 @@
+FROM postgres AS database
+EXPOSE 5432
+WORKDIR /
+COPY config/wait-for-database.sh /wait-for-database.sh
+COPY config/create-database.sh /create-database.sh
+COPY config/start.sh /start.sh
+# HealtChcke --> IS DB CREATED
+HEALTHCHECK --interval=3s --timeout=2s --start-period=2s --retries=5 CMD ["bash","-c","grep -q RUNNING /state.txt"]
+ENV POSTGRES_START_DB=mydemodbxyz
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=this172Dem!opass
+# Start DB, wait till it is up and init POSTGRES_START_DB
+ENTRYPOINT ["bash","-c", "/start.sh"]
+

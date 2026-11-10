@@ -1,0 +1,1 @@
+docker run -p 11434:11434 test-llmserver-build:latest

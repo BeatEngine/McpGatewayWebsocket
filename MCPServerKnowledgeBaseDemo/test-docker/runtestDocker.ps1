@@ -1,0 +1,1 @@
+docker run -p 34590:34590 test-mcpsdemo-build:latest

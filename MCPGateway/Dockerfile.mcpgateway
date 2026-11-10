@@ -1,0 +1,19 @@
+FROM gradle:jdk26-corretto AS mcpgateway
+WORKDIR /
+COPY local.env /local.env
+COPY gradle /gradle
+COPY src /src
+COPY build.gradle /build.gradle
+COPY gradlew /gradlew
+COPY gradlew.bat /gradlew.bat
+COPY MCPGateway.iml /MCPGateway.iml
+COPY settings.gradle /settings.gradle
+#Build Backend
+RUN ["chmod", "+x", "./gradlew"]
+RUN ["./gradlew", "clean" ,"build", "bootJar", "--exclude-task", "test"]
+#Start in small runtime
+FROM amazoncorretto:26-alpine AS runner
+WORKDIR /
+COPY --from=mcpgateway /build/libs/mcpgateway.jar /mcpgateway.jar
+EXPOSE 34589
+ENTRYPOINT ["java", "-jar", "mcpgateway.jar"]

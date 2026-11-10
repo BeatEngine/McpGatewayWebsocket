@@ -1,0 +1,18 @@
+FROM gradle:jdk26-corretto AS mcpserver
+WORKDIR /
+COPY gradle /gradle
+COPY src /src
+COPY build.gradle /build.gradle
+COPY gradlew /gradlew
+COPY gradlew.bat /gradlew.bat
+COPY McpServerKnowledgeBaseDemo.iml /McpServerKnowledgeBaseDemo.iml
+COPY settings.gradle /settings.gradle
+#Build Backend
+RUN ["chmod", "+x", "./gradlew"]
+RUN ["./gradlew", "clean" ,"build", "bootJar", "--exclude-task", "test"]
+#Start in small runtime
+FROM amazoncorretto:26-alpine AS runner
+WORKDIR /
+COPY --from=mcpserver /build/libs/mcpserver.jar /mcpserver.jar
+EXPOSE 34590
+ENTRYPOINT ["java", "-jar", "mcpserver.jar"]

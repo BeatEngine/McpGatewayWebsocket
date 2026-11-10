@@ -1,0 +1,133 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Info page MCP Gateway</title>
+    <link rel="stylesheet" href="css/default.css">
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body style="background-color: khaki">
+<h1 style="text-align: center;">Info page MCP Gateway</h1>
+<nav aria-label="Content" style="text-align: center; align-content: center;">
+    <h2>Table of content</h2>
+    <ul style="margin-inline: 41%;text-align: left;">
+        <li><a href="#LINKS">1. Links</a></li>
+        <li><a href="#WORKFLOW">2. Workflow / architecture</a></li>
+        <li><a href="#DEMOCODE">3. How to use code demo</a></li>
+    </ul>
+</nav>
+<h2 id="LINKS">Links</h2>
+<a href="/springwolf/asyncapi-ui.html" target="_blank">Springwolf UI API-DOC and Testing WebSocket</a>
+<h2 id="WORKFLOW">Workflow / architecture</h2>
+<img src="img/seqDiaAuth.png" style="width: 80vw"></img>
+<h2 id="DEMOCODE">How to use code demo</h2>
+<div style="position: relative;">
+
+    <pre style="display: block; min-height: 60vh; width: 80vw; z-index: 0;position: inherit;margin: 0; background-color: beige;">
+        <code id="dem-1-cnt" style=" padding: 0; transform: translateY(-11.5px) translateX(3px); background-color: beige;">
+
+        </code>
+</pre>
+    <textarea style="field-sizing: content; display: block; width: 80vw; resize: none;position: absolute;top: 0;left: 0; z-index: 1;background: transparent; color: transparent; caret-color: black;" id="dem-1" onkeydown="this.onkeyup(this)" onkeyup="(function(e){document.getElementById('dem-1-cnt').textContent = e.value;document.getElementById('dem-1-cnt').removeAttribute('data-highlighted');hljs.highlightAll();})(this);">
+
+    </textarea>
+<button id="run-code" style="width: 7vw; resize: none; left: 82vw; top:0; height: 40px; position: absolute; background-color: transparent; border-radius: 3px; font-size: 18pt" onclick="(function (){eval(document.getElementById('dem-1').value)})()">Run code</button>
+<button id="ws-send" style="width: 7vw; resize: none; left: 91vw; top:0; height: 40px; position: absolute; background-color: transparent; border-radius: 3px; font-size: 18pt">Send</button>
+<textarea id="websocket-output-console" style="width: 16vw; resize: none; left: 82vw; top:50px; position: absolute; height: 93%"></textarea>
+
+</div>
+
+<script>
+    document.getElementById("dem-1").value = `
+
+    const btnSendId = "ws-send";
+    const outputId = "websocket-output-console";
+    var webSock = null;
+
+    const wsUrl = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws';
+
+    webSock = new WebSocket(wsUrl);
+
+    webSock.onopen = function () {
+        console.log("Open websocket: " + wsUrl);
+    };
+
+    webSock.onerror = function (err) {
+        console.error("websocket error:", err);
+        pushCustomAlert("Error sending websocket: " + err.message, 10);
+    };
+
+    webSock.onmessage = function (ev) {
+        const jsonMessage = JSON.parse(ev.data);
+        const ele = document.getElementById(outputId);
+        ele.value += "["+jsonMessage.author + "] " + jsonMessage.messageType +": "+ jsonMessage.data + "\\n";
+    }
+    // defined as environment variable on server 'MCP_GATEWAY_ACCESS_TOKENS'
+    const msgRegistration = {
+      author: "USER",
+      data: "Authorization: c6607bd8-20a3-4274-bee6-e8c5a0580698",
+      messageType: "REGISTRATION"
+    }
+
+    const msgHistory = {
+      author: "USER",
+      data: "",
+      messageType: "AI_CHAT_HISTORY"
+    }
+
+    const msgRequest = {
+      author: "USER",
+      data: "Search the knowledgebase for 'Subject-51'.",
+      messageType: "AI_REQUEST"
+    }
+    var isregistered = false;
+    document.getElementById('ws-send').onclick = function(){
+
+    if(!isregistered)
+    {
+        webSock.send(JSON.stringify(msgRegistration));
+        pushCustomAlert('Sent REGISTRATION');
+        isregistered = true;
+    }
+
+    webSock.send(JSON.stringify(msgRequest));
+    pushCustomAlert('Sent AI_REQUEST that can take about 30 seconds', 6);
+
+    };
+
+    function pushCustomAlert(text, seconds = 3)
+    {
+        const old = document.getElementById('my-custom-alert-3fesf43f');
+        if(old)
+        {
+            old.remove();
+        }
+        let alert = document.createElement('div');
+        alert.id="my-custom-alert-3fesf43f";
+        alert.style = "padding: 20px;" +
+            "padding: 20px;" +
+            "  position: fixed;" +
+            "  transform: translateY(50vh);" +
+            "  z-index: 999;" +
+            "  right: 30px;" +
+            "  background-color: rgb(33, 150, 243);" +
+            "  border-radius: 5px;" +
+            "  color: white;" +
+            "  margin-bottom: 15px;" +
+            "  opacity: 0.9;" +
+            "  top: 0;";
+        alert.innerText = text;
+        setTimeout(function (){
+            document.getElementById('my-custom-alert-3fesf43f').remove();
+        }, seconds*1000);
+        document.body.appendChild(alert);
+    }
+
+    document.getElementById(outputId).value = "";
+    pushCustomAlert('Code loaded! Click send!');
+
+        `;
+    document.getElementById("dem-1").onkeyup(document.getElementById("dem-1"));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+spring:
+  ai:
+    mcp:
+      server:
+        name: "demo-knowledge-base"
+        version: "1.0.0"

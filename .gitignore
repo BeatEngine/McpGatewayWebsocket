@@ -19,6 +19,16 @@
 *.tar.gz
 *.rar
 
+#Builds
+MCPGateway/build
+MCPServerKnowledgeBaseDemo/build
+#IDE
+MCPGateway/.idea
+MCPServerKnowledgeBaseDemo/.idea
+#Gradle
+MCPGateway/.gradle
+MCPServerKnowledgeBaseDemo/.gradle
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*

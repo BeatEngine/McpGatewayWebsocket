@@ -1,0 +1,1 @@
+docker build -f Dockerfile.mcpgateway -t test-mcpgateway-build .

@@ -1,0 +1,1 @@
+docker build -f Dockerfile.DBserver -t test-db-build .

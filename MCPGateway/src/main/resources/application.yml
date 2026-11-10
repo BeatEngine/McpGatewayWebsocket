@@ -1,0 +1,13 @@
+spring:
+  ai:
+    mcp:
+      client:
+        enabled: true
+        name: mcp-gateway
+        version: 1.0.0
+        type: SYNC
+        request-timeout: 20s
+        stdio:
+          servers-configuration: classpath:/mcp-servers-config.json
+        toolcallback:
+          enabled: true

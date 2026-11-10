@@ -1,0 +1,1 @@
+docker run -p 34589:34589 test-mcpgateway-build:latest

@@ -1,0 +1,63 @@
+services:
+  llmserver:
+    restart: always
+    build:
+      context: ./LLMServer
+      dockerfile: Dockerfile.LLMserver # FROM ollama/ollama
+    deploy: # When using ollama/ollama for NVIDIA GPU otherwise comment out!
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    ports:
+      - "11434:11434"
+    env_file: "globalenvironment.env"
+
+  database:
+    build:
+      context: ./DBServer
+      dockerfile: Dockerfile.DBserver # FROM postgres
+    restart: always
+    ports:
+      - 5432:5432
+    # Definition of POSTGRES_PASSWORD POSTGRES_START_DB
+    env_file: "globalenvironment.env"
+
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+
+  mcp-server-demo1:
+    restart: always
+    build:
+      context: ./MCPServerKnowledgeBaseDemo
+      dockerfile: Dockerfile.mcpserver
+    env_file: "globalenvironment.env"
+    depends_on:
+      database:
+        condition: service_healthy # Wait for DB is ready pg_ready
+      llmserver:
+        condition: service_healthy # Wait for LLM OLLAMA_MODEL is pulled
+    ports:
+      - 34590:34590 #SSE Messaging port.
+
+  mcp-gateway:
+    restart: always
+    build:
+      context: ./MCPGateway
+      dockerfile: Dockerfile.mcpgateway
+    env_file: "globalenvironment.env"
+    depends_on:
+      database:
+        condition: service_healthy # Wait for DB is ready pg_ready
+      llmserver:
+        condition: service_healthy # Wait for LLM OLLAMA_MODEL is pulled
+    ports:
+      - 34589:34589 #Without TLS certs for now!!!.
+
+
+secrets:
+  server-certificate:
+    external: true
+  

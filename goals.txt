@@ -1,0 +1,25 @@
+[UserApplication] 
+       │  (1) Prompt REQUEST
+       ▼
+[MCP-Gateway] (Tools from Search-Server)
+       │  (2) Prompt + Tool-Definitionen like "search_knowledgebase"
+       ▼
+[Ollama (LLM)] 
+       │  (3) Processing REQUEST [Tool Call: search_knowledgebase(query="ISO.....")]
+       ▼
+[MCP-Gateway] 
+       │  (4) JSON-RPC: tools/call -> "search_knowledgebase"
+       ▼
+[MCP-Server] offers Tools like search-knowledgebase
+       │  (5) RESPND test snippits with related Information (vecor search results e.g.)
+       ▼
+[MCP-Gateway] 
+       │  (6) Transmission to Ollama LLM
+       ▼
+[Ollama (LLM)] 
+       │  (7) GENERATES Prompt RESPONSE
+       ▼
+[MCP-Gateway] 
+       │  (8) Prompt RESPONSE
+       ▼
+[UserApplication] -> Shows RESPONSE

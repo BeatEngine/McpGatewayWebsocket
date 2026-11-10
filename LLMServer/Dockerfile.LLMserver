@@ -1,0 +1,24 @@
+FROM ollama/ollama AS llmserverconfig
+EXPOSE 11434
+WORKDIR /
+COPY config/ollama-httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY config/wait-for-ollama-serve.sh /wait-for-ollama-serve.sh
+COPY config/ollama-pull-model.sh /ollama-pull-model.sh
+COPY config/start.sh /start.sh
+# HealtChcke --> IS MODELL PULLED (in 6 minutes)
+HEALTHCHECK --interval=3s --timeout=2s --start-period=2s --retries=120 CMD ["bash","-c","grep -q RUNNING /state.txt"]
+LABEL defaultURL="http://llmserver:11434 set with OLLAMA_URL"
+ENV OLLAMA_URL=http://llmserver:11434
+#qwen2.5:1.5b (small) qwen2.5:3b (slower GPU recommended!)
+ENV OLLAMA_MODEL=qwen2.5:3b
+#Never unload model
+ENV OLLAMA_KEEP_ALIVE=-1
+#CUDA optimizations
+ENV OLLAMA_FLASH_ATTENTION=1
+ENV OLLAMA_KV_CACHE_TYPE=f16
+ENV OLLAMA_NUM_PARALLEL=1
+# optimisation small context because of short toolcalling instructions, but much tools
+ENV OLLAMA_CONTEXT_LENGTH=4096
+# Start OLLAMA, wait till it is up and pull the ai-model OLLAMA_MODEL
+ENTRYPOINT ["bash","-c", "/start.sh"]
+
