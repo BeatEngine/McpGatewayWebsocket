@@ -5,7 +5,7 @@ to set up an scalable AI-Service using MCP easy to test?
 <h4>The gateways info page brings a little code demo for live testing</h4>
 <img style="display:flex" src="test-demo-1.png" width="400"></img>
 <h4>Fast prompt (after first warmup inquiry) 1.3 seconds. (NVIDIA GeForce GTX 1660 SUPER 6GB)</h4>
-<img style="display:flex" src="test-demo-2.jpg" width="800"></img>
+<img style="display:flex" src="test-demo-2.jpg" width="800"></img> 
 
 ## Configuration / How to use
 <h4>The first start takes some minutes, depending on your internet downstream</h4>
